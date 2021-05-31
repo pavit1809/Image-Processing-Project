@@ -23,12 +23,8 @@ app.get('/',(req,res)=>{
 
 app.post('/encrypt',async (req,res)=>{
   try{    
-    const response=await axios.post('http://127.0.0.1:5000/encrypt',req.body);
-    // console.log(response);
-    encimg=response.data.img;
-    kr=response.data.kr
-    kc=response.data.kc
-    iter_max=response.data.iter_max
+    const img=req.body.img.toString().slice(22,req.body.img.toString().length);
+    const response=await axios.post('http://127.0.0.1:5000/encrypt',{img:img});
     res.send({
       status: 200,
       success: true,
@@ -47,6 +43,10 @@ app.post('/encrypt',async (req,res)=>{
 
 app.post('/decrypt',async(req,res)=>{
   try{
+    req.body.img=req.body.img.toString().slice(22,req.body.img.toString().length);
+    req.body.kr = Array.from(req.body.kr.split(','),(n) => Number(n));
+    req.body.kc = Array.from(req.body.kc.split(','),(n) => Number(n));
+    req.body.iter_max=1
     const response=await axios.post('http://127.0.0.1:5000/decrypt',req.body);
     res.send({
       status: 200,
@@ -55,6 +55,7 @@ app.post('/decrypt',async(req,res)=>{
       message:"Api is running fine1"
     });
   }catch(err){
+    console.log(err.message);
     res.send({
       status: 400,
       success: false,
